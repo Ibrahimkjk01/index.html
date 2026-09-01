@@ -1,101 +1,151 @@
-// --- VERİ ---
-// Derslerini buraya ekle (Video ID'lerini kendi videolarınla değiştir)
-const courses = [
-    { id: 1, title: '1. Derse Giriş', desc: 'Genel bakış ve sistem tanıtımı.', videoId: 'dQw4w9WgXcQ' },
-    { id: 2, title: '2. Temel Kavramlar', desc: 'Kursun temel direklerini öğrenin.', videoId: 'dQw4w9WgXcQ' },
-    { id: 3, title: '3. Uygulama ve Test', desc: 'İlk pratik uygulamanızı yapın.', videoId: 'dQw4w9WgXcQ' },
-    { id: 4, title: '4. İleri Seviye Giriş', desc: 'İleri düzey konuların temelleri.', videoId: 'dQw4w9WgXcQ' }
-];
-
-// --- DURUM YÖNETİMİ ---
-// Kaydedilmiş tamamlanan dersleri al
-let completedLessons = JSON.parse(localStorage.getItem('karga_academy_progress')) || [];
-let currentLessonId = courses[0].id; // Varsayılan ders
-
-// --- BAŞLANGIÇ ---
-document.addEventListener('DOMContentLoaded', () => {
-    renderLessonList();
-    loadLesson(currentLessonId); // İlk dersi yükle
-    updateOverallProgress();
-});
-
-// --- FONKSİYONLAR ---
-
-// 1. Sol Menüdeki Ders Listesini Oluştur (Checklist Tasarımı)
-function renderLessonList() {
-    const listGroup = document.getElementById('lessonList');
-    listGroup.innerHTML = ''; // Temizle
-
-    courses.forEach(lesson => {
-        const isCompleted = completedLessons.includes(lesson.id);
-        const isActive = lesson.id === currentLessonId;
-
-        // Ders Butonu (Liste Öğesi)
-        const button = document.createElement('button');
-        // 'completed' class'ını ekle, css zaten üzeri çizmeyi ve tık'ı yönetiyor
-        button.className = `list-group-item list-group-item-action d-flex align-items-center gap-3 ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
-        button.setAttribute('data-id', lesson.id);
-        
-        // Sadece başlığa tıklanınca ders yüklensin, tık'a tıklayınca değişmesin
-        button.innerHTML = `
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" ${isCompleted ? 'checked' : ''} 
-                    id="check-${lesson.id}"
-                    style="border: 2px solid var(--karga-accent); background-color: ${isCompleted ? 'var(--karga-accent)' : 'transparent'}; cursor:pointer;"
-                    onclick="toggleCheckStatus(${lesson.id})">
-            </div>
-            <span class="lesson-title flex-grow-1 text-start" onclick="loadLesson(${lesson.id})">${lesson.title}</span>
-        `;
-
-        listGroup.appendChild(button);
-    });
-}
-
-// 2. Seçilen Dersi Yükle (Sağ Paneli Güncelle)
-function loadLesson(id) {
-    const lesson = courses.find(c => c.id === id);
-    if (!lesson) return;
-
-    currentLessonId = id;
-
-    // Video Player Güncelle
-    document.getElementById('videoPlayer').src = `https://www.youtube.com/embed/${lesson.videoId}`;
-    
-    // Başlık ve Açıklama Güncelle
-    document.getElementById('lessonTitle').innerText = lesson.title;
-    document.getElementById('lessonDesc').innerText = lesson.desc;
-
-    // Sol menüde aktifliği (vurguyu) güncelle
-    document.querySelectorAll('#lessonList button').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`#lessonList button[data-id="${id}"]`).classList.add('active');
-}
-
-// 3. TIK (Checkbox) Durumunu Değiştir (Karga Akademi Stili)
-function toggleCheckStatus(id) {
-    // Tıklandıysa kaldır, tıklanmadıysa ekle
-    if (!completedLessons.includes(id)) {
-        completedLessons.push(id);
-    } else {
-        completedLessons = completedLessons.filter(lessonId => lessonId !== id);
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akademi Paneli</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --bg-main: #0f1115;
+      --bg-card: #181b20;
+      --accent: #f59e0b;
+      --border-color: #272b34;
+      --text-muted: #8b949e;
     }
+    body {
+      background-color: var(--bg-main);
+      color: #f0f6fc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .navbar {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .sidebar {
+      background-color: var(--bg-card);
+      border-right: 1px solid var(--border-color);
+      min-height: calc(100vh - 57px);
+    }
+    .lesson-item {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .lesson-item:hover {
+      background-color: rgba(245, 158, 11, 0.08);
+      border-color: var(--accent);
+    }
+    .lesson-item.active {
+      background-color: rgba(245, 158, 11, 0.15);
+      border-color: var(--accent);
+    }
+    .lesson-item.completed .lesson-name {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+    .custom-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      background: transparent;
+      transition: all 0.2s;
+    }
+    .custom-check.checked {
+      background-color: var(--accent);
+      color: #000;
+    }
+    .custom-check i {
+      display: none;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .custom-check.checked i {
+      display: block;
+    }
+    .progress-bar-custom {
+      height: 8px;
+      background-color: #272b34;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background-color: var(--accent);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .video-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
 
-    // LocalStorage'a kaydet (KALICILIK)
-    localStorage.setItem('karga_academy_progress', JSON.stringify(completedLessons));
+  <!-- Üst Menü -->
+  <nav class="navbar navbar-dark px-3 py-2">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <span class="navbar-brand fw-bold text-warning mb-0 fs-5">
+        <i class="bi bi-play-btn-fill me-2"></i>AKADEMİ PANELİ
+      </span>
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-dark border border-secondary text-warning">Ders Takip</span>
+      </div>
+    </div>
+  </nav>
 
-    // Menüyü ve genel ilerlemeyi yenile
-    renderLessonList();
-    updateOverallProgress();
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sol Ders Listesi -->
+      <aside class="col-lg-4 col-xl-3 p-3 sidebar">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small fw-semibold text-secondary text-uppercase">Genel İlerleme</span>
+          <span class="small fw-bold text-warning" id="progressText">0%</span>
+        </div>
+        <div class="progress-bar-custom mb-4">
+          <div class="progress-fill" id="mainProgress"></div>
+        </div>
 
-    // Hangi ders seçiliyse onu yeniden yükle (aktif durumunu korumak için)
-    loadLesson(currentLessonId);
-}
+        <h6 class="small text-secondary fw-bold text-uppercase mb-3">Ders Listesi</h6>
+        <div id="lessonList"></div>
+      </aside>
 
-// 4. Genel İlerleme Çubuğunu Güncelle
-function updateOverallProgress() {
-    const totalLessons = courses.length;
-    const completedCount = completedLessons.length;
-    const progressPercent = totalLessons === 0 ? 0 : Math.round((completedCount / totalLessons) * 100);
+      <!-- Sağ Video Alanı -->
+      <main class="col-lg-8 col-xl-9 p-4">
+        <div class="video-card p-3 shadow">
+          <div class="ratio ratio-16x9 mb-3 rounded overflow-hidden">
+            <iframe id="videoPlayer" src="" title="Ders Videosu" allowfullscreen></iframe>
+          </div>
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pt-2">
+            <div>
+              <h4 id="lessonTitle" class="fw-bold text-warning mb-1">Ders Seçiniz</h4>
+              <p id="lessonDesc" class="text-secondary small mb-0">Listeden izlemek istediğiniz dersi seçin.</p>
+            </div>
+            <button class="btn btn-warning fw-bold px-4" id="mainCompleteBtn" onclick="toggleCurrentLesson()">
+              <i class="bi bi-check2-circle me-1"></i> Tamamlandı İşaretle
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
 
-    document.getElementById('mainProgress').style.width = `${progressPercent}%`;
-    document.getElementById('progressText').innerText = `${progressPercent}%`;
-}
+  <script src="script.js"></script>
+</body>
+</html>
