@@ -1,221 +1,393 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Akademi Paneli</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="theme-color" content="#000000"/>
+  <meta name="description" content="Karga Akademi ile premium mentorluk, çizelge takibi ve öğrenci-mentor yönetimi."/>
+  <link rel="icon" type="image/jpeg" href="https://customer-assets.emergentagent.com/job_karga-mentorship/artifacts/sroap6d9_WhatsApp%20Image%202026-04-10%20at%2015.05.28.jpeg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
+  <title>Karga Akademi | Premium Mentorluk</title>
+
   <style>
     :root {
-      --bg-main: #0d1117;
-      --bg-card: #161b22;
+      --bg-dark: #090a0f;
+      --card-bg: #11141c;
+      --card-inner: #161b26;
+      --border-color: #212838;
       --accent: #f59e0b;
-      --border: #30363d;
-      --text-muted: #8b949e;
+      --accent-hover: #d97706;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success: #10b981;
     }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: var(--bg-main);
-      color: #c9d1d9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      margin: 0;
-      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    .navbar {
-      background-color: var(--bg-card);
-      border-bottom: 1px solid var(--border);
+
+    /* Üst Bar */
+    header {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .sidebar {
-      background-color: var(--bg-card);
-      border-right: 1px solid var(--border);
-      min-height: calc(100vh - 60px);
-    }
-    .lesson-item {
-      background-color: #21262d;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      margin-bottom: 8px;
-      padding: 10px 14px;
-      cursor: pointer;
+    .logo-area {
       display: flex;
       align-items: center;
       gap: 12px;
-      transition: background 0.2s;
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
     }
-    .lesson-item:hover {
+    .logo-area img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .badge-mentor {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    /* Ana Ekran Düzeni */
+    .app-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      padding: 24px;
+      max-width: 1500px;
+      margin: 0 auto;
+      width: 100%;
+      flex-grow: 1;
+    }
+
+    @media (max-width: 992px) {
+      .app-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Kart Yapıları */
+    .panel-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* İlerleme Çubuğu */
+    .progress-section {
+      margin-bottom: 24px;
+      background-color: var(--card-inner);
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .progress-track {
+      height: 8px;
+      background-color: var(--border-color);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+
+    /* Çizelge Görev Listesi */
+    .section-heading {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .task-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+    .task-card {
+      background-color: var(--card-inner);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .task-card:hover {
       border-color: var(--accent);
+      transform: translateY(-1px);
     }
-    .lesson-item.active {
+    .task-card.active {
       border-color: var(--accent);
-      background-color: rgba(245, 158, 11, 0.15);
+      background-color: rgba(245, 158, 11, 0.08);
     }
-    .lesson-item.completed .lesson-title {
+    .task-card.completed .task-main-text {
       text-decoration: line-through;
       color: var(--text-muted);
     }
-    .check-box {
-      width: 20px;
-      height: 20px;
+
+    /* Checkbox */
+    .custom-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
       border: 2px solid var(--accent);
-      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       flex-shrink: 0;
-      background: transparent;
+      background-color: transparent;
+      transition: 0.2s;
     }
-    .lesson-item.completed .check-box {
-      background-color: var(--accent);
-      color: #000;
+    .task-card.completed .custom-checkbox {
+      background-color: var(--success);
+      border-color: var(--success);
     }
-    .check-box i {
+    .custom-checkbox i {
       display: none;
+      color: #fff;
       font-size: 13px;
       font-weight: bold;
     }
-    .lesson-item.completed .check-box i {
+    .task-card.completed .custom-checkbox i {
       display: block;
     }
-    .progress-bar-wrap {
-      height: 8px;
-      background-color: #30363d;
-      border-radius: 4px;
-      overflow: hidden;
+
+    .task-content {
+      flex-grow: 1;
+      text-align: left;
     }
-    .progress-bar-fill {
-      height: 100%;
+    .task-main-text {
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: block;
+      line-height: 1.3;
+    }
+    .task-sub-text {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* Video ve Detay */
+    .video-holder {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      background-color: #000;
+    }
+    .video-holder iframe {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      border: none;
+    }
+    .content-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-top: 8px;
+    }
+    .action-btn {
       background-color: var(--accent);
-      width: 0%;
-      transition: width 0.3s;
+      color: #090a0f;
+      font-weight: 700;
+      font-size: 0.88rem;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+    .action-btn:hover {
+      background-color: var(--accent-hover);
+    }
+    .action-btn.done {
+      background-color: var(--success);
+      color: #fff;
     }
   </style>
 </head>
 <body>
 
-  <nav class="navbar navbar-dark px-3 py-2">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-      <span class="navbar-brand fw-bold text-warning mb-0 fs-5">
-        <i class="bi bi-play-btn-fill me-2"></i>AKADEMİ PANELİ
-      </span>
-      <span class="badge bg-dark border border-secondary text-warning">Ders Takip</span>
+  <header>
+    <a href="#" class="logo-area">
+      <img src="https://customer-assets.emergentagent.com/job_karga-mentorship/artifacts/sroap6d9_WhatsApp%20Image%202026-04-10%20at%2015.05.28.jpeg" alt="Logo"/>
+      KARGA AKADEMİ
+    </a>
+    <div class="badge-mentor">
+      <i class="bi bi-shield-check me-1"></i> Premium Mentorluk
     </div>
-  </nav>
+  </header>
 
-  <div class="container-fluid">
-    <div class="row">
-      <!-- Sol Panel: Dersler -->
-      <aside class="col-lg-4 col-xl-3 p-3 sidebar">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="small fw-semibold text-secondary">İLERLEME</span>
-          <span class="small fw-bold text-warning" id="progressText">0%</span>
+  <div class="app-layout">
+    <!-- Sol: Çizelge & Görevler -->
+    <aside class="panel-card">
+      <div class="progress-section">
+        <div class="progress-meta">
+          <span>HAFTALIK ÇİZELGE</span>
+          <span id="progressPercent" style="color: var(--accent);">0%</span>
         </div>
-        <div class="progress-bar-wrap mb-4">
-          <div class="progress-bar-fill" id="progressFill"></div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressBar"></div>
         </div>
+      </div>
 
-        <h6 class="small text-secondary fw-bold mb-3">DERS LİSTESİ</h6>
-        <div id="lessonList"></div>
-      </aside>
+      <div class="section-heading">GÖREV VE DERS ÇİZELGESİ</div>
+      <div class="task-container" id="tasksList"></div>
+    </aside>
 
-      <!-- Sağ Panel: Video -->
-      <main class="col-lg-8 col-xl-9 p-4">
-        <div class="p-3 bg-dark border border-secondary rounded shadow">
-          <div class="ratio ratio-16x9 mb-3 rounded overflow-hidden">
-            <iframe id="videoPlayer" src="" title="Ders Videosu" allowfullscreen></iframe>
-          </div>
-          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <div>
-              <h4 id="activeLessonTitle" class="fw-bold text-warning mb-1">Ders Seçin</h4>
-              <p id="activeLessonDesc" class="text-secondary small mb-0"></p>
-            </div>
-            <button class="btn btn-warning fw-bold px-4" id="completeBtn" onclick="toggleCurrent()">
-              <i class="bi bi-check2-circle me-1"></i> Tamamlandı İşaretle
-            </button>
-          </div>
+    <!-- Sağ: Video ve Kontrol -->
+    <main class="panel-card">
+      <div class="video-holder">
+        <iframe id="mainIframe" src="" allowfullscreen></iframe>
+      </div>
+
+      <div class="content-footer">
+        <div>
+          <h2 id="activeTitle" style="font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Ders Seçiniz</h2>
+          <p id="activeDesc" style="color: var(--text-muted); font-size: 0.85rem;">Sol taraftaki çizelgeden bir konu seçin.</p>
         </div>
-      </main>
-    </div>
+        <button class="action-btn" id="actionBtn" onclick="toggleSelected()">
+          <i class="bi bi-check2-circle"></i> Tamamlandı Olarak İşaretle
+        </button>
+      </div>
+    </main>
   </div>
 
   <script>
-    const courses = [
-      { id: 1, title: '1. Derse Giriş ve Temel Bilgiler', desc: 'Genel bakış ve giriş seviyesi anlatım.', videoId: 'dQw4w9WgXcQ' },
-      { id: 2, title: '2. Temel Kavramlar ve İlk Adım', desc: 'Konu içi temel mantık ve detaylar.', videoId: 'dQw4w9WgXcQ' },
-      { id: 3, title: '3. Uygulama ve Soru Çözümü', desc: 'Pekiştirme ve pratik adımları.', videoId: 'dQw4w9WgXcQ' },
-      { id: 4, title: '4. Değerlendirme ve Kapanış', desc: 'Genel tekrar ve özet test.', videoId: 'dQw4w9WgXcQ' }
+    // Karga Akademi Takip Modülü
+    const curriculum = [
+      { id: 1, title: '1. Hafta: Mentorluk Başlangıç & Hedef Belirleme', sub: 'Temel Çizelge', desc: 'Dönem hedefleri ve haftalık çalışma temposunun ayarlanması.', videoId: 'dQw4w9WgXcQ' },
+      { id: 2, title: '2. Hafta: Konu Analizi ve Temel Konseptler', sub: 'Eksik Analizi', desc: 'Deneme sonuçlarına göre öncelikli konuların belirlenmesi.', videoId: 'dQw4w9WgXcQ' },
+      { id: 3, title: '3. Hafta: Pratik & Soru Çözüm Stratejileri', sub: 'Hız Kazanımı', desc: 'Zaman yönetimi ve pratik test çözme teknikleri.', videoId: 'dQw4w9WgXcQ' },
+      { id: 4, title: '4. Hafta: Aylık Genel Değerlendirme', sub: 'Raporlama & Gelişim', desc: 'Aylık ilerleme tablosunun gözden geçirilmesi ve yeni planlama.', videoId: 'dQw4w9WgXcQ' }
     ];
 
-    let completed = JSON.parse(localStorage.getItem('karga_data')) || [];
-    let currentId = courses[0].id;
+    let completedItems = JSON.parse(localStorage.getItem('karga_full_academy_data')) || [];
+    let selectedId = curriculum[0].id;
 
-    function render() {
-      const list = document.getElementById('lessonList');
-      list.innerHTML = '';
+    function renderView() {
+      const container = document.getElementById('tasksList');
+      container.innerHTML = '';
 
-      courses.forEach(c => {
-        const isDone = completed.includes(c.id);
-        const isActive = c.id === currentId;
+      curriculum.forEach(item => {
+        const isDone = completedItems.includes(item.id);
+        const isActive = item.id === selectedId;
 
-        const div = document.createElement('div');
-        div.className = `lesson-item ${isActive ? 'active' : ''} ${isDone ? 'completed' : ''}`;
+        const card = document.createElement('div');
+        card.className = `task-card ${isActive ? 'active' : ''} ${isDone ? 'completed' : ''}`;
         
-        div.innerHTML = `
-          <div class="check-box" onclick="event.stopPropagation(); toggle(${c.id});">
+        card.innerHTML = `
+          <div class="custom-checkbox" onclick="event.stopPropagation(); toggleItem(${item.id});">
             <i class="bi bi-check-lg"></i>
           </div>
-          <span class="lesson-title flex-grow-1 small fw-semibold">${c.title}</span>
+          <div class="task-content">
+            <span class="task-main-text">${item.title}</span>
+            <span class="task-sub-text">${item.sub}</span>
+          </div>
         `;
 
-        div.onclick = () => selectCourse(c.id);
-        list.appendChild(div);
+        card.onclick = () => selectItem(item.id);
+        container.appendChild(card);
       });
 
-      updateUI();
+      syncProgress();
     }
 
-    function selectCourse(id) {
-      currentId = id;
-      const c = courses.find(item => item.id === id);
-      if (!c) return;
+    function selectItem(id) {
+      selectedId = id;
+      const target = curriculum.find(x => x.id === id);
+      if (!target) return;
 
-      document.getElementById('videoPlayer').src = `https://www.youtube.com/embed/${c.videoId}`;
-      document.getElementById('activeLessonTitle').innerText = c.title;
-      document.getElementById('activeLessonDesc').innerText = c.desc;
-      render();
+      document.getElementById('mainIframe').src = `https://www.youtube.com/embed/${target.videoId}`;
+      document.getElementById('activeTitle').innerText = target.title;
+      document.getElementById('activeDesc').innerText = target.desc;
+      renderView();
     }
 
-    function toggle(id) {
-      if (completed.includes(id)) {
-        completed = completed.filter(i => i !== id);
+    function toggleItem(id) {
+      if (completedItems.includes(id)) {
+        completedItems = completedItems.filter(x => x !== id);
       } else {
-        completed.push(id);
+        completedItems.push(id);
       }
-      localStorage.setItem('karga_data', JSON.stringify(completed));
-      render();
+      localStorage.setItem('karga_full_academy_data', JSON.stringify(completedItems));
+      renderView();
     }
 
-    function toggleCurrent() {
-      toggle(currentId);
+    function toggleSelected() {
+      toggleItem(selectedId);
     }
 
-    function updateUI() {
-      const isDone = completed.includes(currentId);
-      const btn = document.getElementById('completeBtn');
+    function syncProgress() {
+      const isDone = completedItems.includes(selectedId);
+      const btn = document.getElementById('actionBtn');
+      
       if (isDone) {
-        btn.className = 'btn btn-success fw-bold px-4';
-        btn.innerHTML = '<i class="bi bi-check-all me-1"></i> Tamamlandı';
+        btn.className = 'action-btn done';
+        btn.innerHTML = '<i class="bi bi-check-all"></i> Görev Tamamlandı';
       } else {
-        btn.className = 'btn btn-warning fw-bold px-4';
-        btn.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Tamamlandı İşaretle';
+        btn.className = 'action-btn';
+        btn.innerHTML = '<i class="bi bi-check2-circle"></i> Tamamlandı Olarak İşaretle';
       }
 
-      const percent = Math.round((completed.length / courses.length) * 100);
-      document.getElementById('progressFill').style.width = percent + '%';
-      document.getElementById('progressText').innerText = percent + '%';
+      const percent = Math.round((completedItems.length / curriculum.length) * 100);
+      document.getElementById('progressBar').style.width = percent + '%';
+      document.getElementById('progressPercent').innerText = percent + '%';
     }
 
-    // Başlangıç
-    selectCourse(currentId);
+    // Başlat
+    selectItem(selectedId);
   </script>
 </body>
 </html>
