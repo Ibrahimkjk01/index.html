@@ -8,136 +8,127 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <style>
     :root {
-      --bg-main: #0f1115;
-      --bg-card: #181b20;
+      --bg-main: #0d1117;
+      --bg-card: #161b22;
       --accent: #f59e0b;
-      --border-color: #272b34;
+      --border: #30363d;
       --text-muted: #8b949e;
     }
     body {
       background-color: var(--bg-main);
-      color: #f0f6fc;
+      color: #c9d1d9;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
     }
     .navbar {
       background-color: var(--bg-card);
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border);
     }
     .sidebar {
       background-color: var(--bg-card);
-      border-right: 1px solid var(--border-color);
-      min-height: calc(100vh - 57px);
+      border-right: 1px solid var(--border);
+      min-height: calc(100vh - 60px);
     }
     .lesson-item {
-      background-color: transparent;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+      background-color: #21262d;
+      border: 1px solid var(--border);
+      border-radius: 6px;
       margin-bottom: 8px;
-      padding: 12px 14px;
+      padding: 10px 14px;
       cursor: pointer;
-      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       gap: 12px;
+      transition: background 0.2s;
     }
     .lesson-item:hover {
-      background-color: rgba(245, 158, 11, 0.08);
       border-color: var(--accent);
     }
     .lesson-item.active {
-      background-color: rgba(245, 158, 11, 0.15);
       border-color: var(--accent);
+      background-color: rgba(245, 158, 11, 0.15);
     }
-    .lesson-item.completed .lesson-name {
+    .lesson-item.completed .lesson-title {
       text-decoration: line-through;
       color: var(--text-muted);
     }
-    .custom-check {
+    .check-box {
       width: 20px;
       height: 20px;
-      border-radius: 4px;
       border: 2px solid var(--accent);
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       flex-shrink: 0;
       background: transparent;
-      transition: all 0.2s;
     }
-    .custom-check.checked {
+    .lesson-item.completed .check-box {
       background-color: var(--accent);
       color: #000;
     }
-    .custom-check i {
+    .check-box i {
       display: none;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: bold;
     }
-    .custom-check.checked i {
+    .lesson-item.completed .check-box i {
       display: block;
     }
-    .progress-bar-custom {
+    .progress-bar-wrap {
       height: 8px;
-      background-color: #272b34;
-      border-radius: 10px;
+      background-color: #30363d;
+      border-radius: 4px;
       overflow: hidden;
     }
-    .progress-fill {
-      background-color: var(--accent);
+    .progress-bar-fill {
       height: 100%;
+      background-color: var(--accent);
       width: 0%;
-      transition: width 0.3s ease;
-    }
-    .video-card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
+      transition: width 0.3s;
     }
   </style>
 </head>
 <body>
 
-  <!-- Üst Menü -->
   <nav class="navbar navbar-dark px-3 py-2">
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <span class="navbar-brand fw-bold text-warning mb-0 fs-5">
         <i class="bi bi-play-btn-fill me-2"></i>AKADEMİ PANELİ
       </span>
-      <div class="d-flex align-items-center gap-2">
-        <span class="badge bg-dark border border-secondary text-warning">Ders Takip</span>
-      </div>
+      <span class="badge bg-dark border border-secondary text-warning">Ders Takip</span>
     </div>
   </nav>
 
   <div class="container-fluid">
     <div class="row">
-      <!-- Sol Ders Listesi -->
+      <!-- Sol Panel: Dersler -->
       <aside class="col-lg-4 col-xl-3 p-3 sidebar">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="small fw-semibold text-secondary text-uppercase">Genel İlerleme</span>
+          <span class="small fw-semibold text-secondary">İLERLEME</span>
           <span class="small fw-bold text-warning" id="progressText">0%</span>
         </div>
-        <div class="progress-bar-custom mb-4">
-          <div class="progress-fill" id="mainProgress"></div>
+        <div class="progress-bar-wrap mb-4">
+          <div class="progress-bar-fill" id="progressFill"></div>
         </div>
 
-        <h6 class="small text-secondary fw-bold text-uppercase mb-3">Ders Listesi</h6>
+        <h6 class="small text-secondary fw-bold mb-3">DERS LİSTESİ</h6>
         <div id="lessonList"></div>
       </aside>
 
-      <!-- Sağ Video Alanı -->
+      <!-- Sağ Panel: Video -->
       <main class="col-lg-8 col-xl-9 p-4">
-        <div class="video-card p-3 shadow">
+        <div class="p-3 bg-dark border border-secondary rounded shadow">
           <div class="ratio ratio-16x9 mb-3 rounded overflow-hidden">
             <iframe id="videoPlayer" src="" title="Ders Videosu" allowfullscreen></iframe>
           </div>
-          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pt-2">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
             <div>
-              <h4 id="lessonTitle" class="fw-bold text-warning mb-1">Ders Seçiniz</h4>
-              <p id="lessonDesc" class="text-secondary small mb-0">Listeden izlemek istediğiniz dersi seçin.</p>
+              <h4 id="activeLessonTitle" class="fw-bold text-warning mb-1">Ders Seçin</h4>
+              <p id="activeLessonDesc" class="text-secondary small mb-0"></p>
             </div>
-            <button class="btn btn-warning fw-bold px-4" id="mainCompleteBtn" onclick="toggleCurrentLesson()">
+            <button class="btn btn-warning fw-bold px-4" id="completeBtn" onclick="toggleCurrent()">
               <i class="bi bi-check2-circle me-1"></i> Tamamlandı İşaretle
             </button>
           </div>
@@ -146,6 +137,85 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const courses = [
+      { id: 1, title: '1. Derse Giriş ve Temel Bilgiler', desc: 'Genel bakış ve giriş seviyesi anlatım.', videoId: 'dQw4w9WgXcQ' },
+      { id: 2, title: '2. Temel Kavramlar ve İlk Adım', desc: 'Konu içi temel mantık ve detaylar.', videoId: 'dQw4w9WgXcQ' },
+      { id: 3, title: '3. Uygulama ve Soru Çözümü', desc: 'Pekiştirme ve pratik adımları.', videoId: 'dQw4w9WgXcQ' },
+      { id: 4, title: '4. Değerlendirme ve Kapanış', desc: 'Genel tekrar ve özet test.', videoId: 'dQw4w9WgXcQ' }
+    ];
+
+    let completed = JSON.parse(localStorage.getItem('karga_data')) || [];
+    let currentId = courses[0].id;
+
+    function render() {
+      const list = document.getElementById('lessonList');
+      list.innerHTML = '';
+
+      courses.forEach(c => {
+        const isDone = completed.includes(c.id);
+        const isActive = c.id === currentId;
+
+        const div = document.createElement('div');
+        div.className = `lesson-item ${isActive ? 'active' : ''} ${isDone ? 'completed' : ''}`;
+        
+        div.innerHTML = `
+          <div class="check-box" onclick="event.stopPropagation(); toggle(${c.id});">
+            <i class="bi bi-check-lg"></i>
+          </div>
+          <span class="lesson-title flex-grow-1 small fw-semibold">${c.title}</span>
+        `;
+
+        div.onclick = () => selectCourse(c.id);
+        list.appendChild(div);
+      });
+
+      updateUI();
+    }
+
+    function selectCourse(id) {
+      currentId = id;
+      const c = courses.find(item => item.id === id);
+      if (!c) return;
+
+      document.getElementById('videoPlayer').src = `https://www.youtube.com/embed/${c.videoId}`;
+      document.getElementById('activeLessonTitle').innerText = c.title;
+      document.getElementById('activeLessonDesc').innerText = c.desc;
+      render();
+    }
+
+    function toggle(id) {
+      if (completed.includes(id)) {
+        completed = completed.filter(i => i !== id);
+      } else {
+        completed.push(id);
+      }
+      localStorage.setItem('karga_data', JSON.stringify(completed));
+      render();
+    }
+
+    function toggleCurrent() {
+      toggle(currentId);
+    }
+
+    function updateUI() {
+      const isDone = completed.includes(currentId);
+      const btn = document.getElementById('completeBtn');
+      if (isDone) {
+        btn.className = 'btn btn-success fw-bold px-4';
+        btn.innerHTML = '<i class="bi bi-check-all me-1"></i> Tamamlandı';
+      } else {
+        btn.className = 'btn btn-warning fw-bold px-4';
+        btn.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Tamamlandı İşaretle';
+      }
+
+      const percent = Math.round((completed.length / courses.length) * 100);
+      document.getElementById('progressFill').style.width = percent + '%';
+      document.getElementById('progressText').innerText = percent + '%';
+    }
+
+    // Başlangıç
+    selectCourse(currentId);
+  </script>
 </body>
 </html>
