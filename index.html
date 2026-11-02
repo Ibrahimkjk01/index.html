@@ -4,13 +4,12 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta name="theme-color" content="#000000"/>
-  <meta name="description" content="Karga Akademi ile premium mentorluk, çizelge takibi ve öğrenci-mentor yönetimi."/>
-  <link rel="icon" type="image/jpeg" href="https://customer-assets.emergentagent.com/job_karga-mentorship/artifacts/sroap6d9_WhatsApp%20Image%202026-04-10%20at%2015.05.28.jpeg"/>
+  <meta name="description" content="Şuna Hanım için özel hazırlanan günlük çalışma programı ve takip çizelgesi."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
-  <title>Karga Akademi | Premium Mentorluk</title>
+  <title>Şuna Hanım'ın Çalışma Programı</title>
 
   <style>
     :root {
@@ -54,12 +53,6 @@
       font-size: 1.15rem;
       letter-spacing: -0.02em;
     }
-    .logo-area img {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      object-fit: cover;
-    }
     .badge-mentor {
       background: rgba(245, 158, 11, 0.12);
       border: 1px solid rgba(245, 158, 11, 0.35);
@@ -73,7 +66,7 @@
     /* Ana Ekran Düzeni */
     .app-layout {
       display: grid;
-      grid-template-columns: 360px 1fr;
+      grid-template-columns: 380px 1fr;
       gap: 24px;
       padding: 24px;
       max-width: 1500px;
@@ -141,6 +134,8 @@
       flex-direction: column;
       gap: 10px;
       overflow-y: auto;
+      max-height: 600px;
+      padding-right: 4px;
     }
     .task-card {
       background-color: var(--card-inner);
@@ -210,7 +205,7 @@
       margin-top: 3px;
     }
 
-    /* Video ve Detay */
+    /* Sağ Bölüm & Detaylar */
     .video-holder {
       position: relative;
       padding-bottom: 56.25%;
@@ -226,6 +221,26 @@
       top: 0; left: 0; width: 100%; height: 100%;
       border: none;
     }
+    .day-details-box {
+      background-color: var(--card-inner);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .day-details-box h3 {
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .day-details-box p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
     .content-footer {
       display: flex;
       justify-content: space-between;
@@ -261,20 +276,20 @@
 
   <header>
     <a href="#" class="logo-area">
-      <img src="https://customer-assets.emergentagent.com/job_karga-mentorship/artifacts/sroap6d9_WhatsApp%20Image%202026-04-10%20at%2015.05.28.jpeg" alt="Logo"/>
-      KARGA AKADEMİ
+      <i class="bi bi-journal-check" style="font-size: 1.4rem;"></i>
+      ŞUNA HANIM'IN ÇALIŞMA PROGRAMI
     </a>
     <div class="badge-mentor">
-      <i class="bi bi-shield-check me-1"></i> Premium Mentorluk
+      <i class="bi bi-calendar-week me-1"></i> Günlük Takip
     </div>
   </header>
 
   <div class="app-layout">
-    <!-- Sol: Çizelge & Görevler -->
+    <!-- Sol: Günlük Çizelge -->
     <aside class="panel-card">
       <div class="progress-section">
         <div class="progress-meta">
-          <span>HAFTALIK ÇİZELGE</span>
+          <span>HAFTALIK İLERLEME</span>
           <span id="progressPercent" style="color: var(--accent);">0%</span>
         </div>
         <div class="progress-track">
@@ -282,38 +297,88 @@
         </div>
       </div>
 
-      <div class="section-heading">GÖREV VE DERS ÇİZELGESİ</div>
+      <div class="section-heading">GÜNLÜK ÇALIŞMA PROGRAMI</div>
       <div class="task-container" id="tasksList"></div>
     </aside>
 
-    <!-- Sağ: Video ve Kontrol -->
+    <!-- Sağ: Detaylar ve Video -->
     <main class="panel-card">
       <div class="video-holder">
         <iframe id="mainIframe" src="" allowfullscreen></iframe>
       </div>
 
+      <div class="day-details-box">
+        <h3>Günlük Ders Programı Detayı</h3>
+        <p id="activeDesc">Sol taraftaki çizelgeden bir gün seçin.</p>
+      </div>
+
       <div class="content-footer">
         <div>
-          <h2 id="activeTitle" style="font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Ders Seçiniz</h2>
-          <p id="activeDesc" style="color: var(--text-muted); font-size: 0.85rem;">Sol taraftaki çizelgeden bir konu seçin.</p>
+          <h2 id="activeTitle" style="font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Gün Seçiniz</h2>
+          <p style="color: var(--text-muted); font-size: 0.8rem;">Tamamlandığında işaretlemeyi unutmayın.</p>
         </div>
         <button class="action-btn" id="actionBtn" onclick="toggleSelected()">
-          <i class="bi bi-check2-circle"></i> Tamamlandı Olarak İşaretle
+          <i class="bi bi-check2-circle"></i> Günü Tamamlandı İşaretle
         </button>
       </div>
     </main>
   </div>
 
   <script>
-    // Karga Akademi Takip Modülü
+    // Gün Gün TYT / Çalışma Programı Verileri
     const curriculum = [
-      { id: 1, title: '1. Hafta: Mentorluk Başlangıç & Hedef Belirleme', sub: 'Temel Çizelge', desc: 'Dönem hedefleri ve haftalık çalışma temposunun ayarlanması.', videoId: 'dQw4w9WgXcQ' },
-      { id: 2, title: '2. Hafta: Konu Analizi ve Temel Konseptler', sub: 'Eksik Analizi', desc: 'Deneme sonuçlarına göre öncelikli konuların belirlenmesi.', videoId: 'dQw4w9WgXcQ' },
-      { id: 3, title: '3. Hafta: Pratik & Soru Çözüm Stratejileri', sub: 'Hız Kazanımı', desc: 'Zaman yönetimi ve pratik test çözme teknikleri.', videoId: 'dQw4w9WgXcQ' },
-      { id: 4, title: '4. Hafta: Aylık Genel Değerlendirme', sub: 'Raporlama & Gelişim', desc: 'Aylık ilerleme tablosunun gözden geçirilmesi ve yeni planlama.', videoId: 'dQw4w9WgXcQ' }
+      { 
+        id: 1, 
+        title: 'Pazartesi: Türkçe & Matematik Odaklı', 
+        sub: 'Paragraf & 1.-2. Dereceden Denklemler', 
+        desc: '1. Blok: Paragraf denemesi ve dil bilgisi tekrarı.\n2. Blok: 1. ve 2. dereceden denklemler konu tekrarı ve en az 40 soru çözümü.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 2, 
+        title: 'Salı: Fen & Tarih Çalışması', 
+        sub: 'Kimyasal Hesaplamalar & Kurtuluş Savaşı', 
+        desc: '1. Blok: Kimyasal hesaplamalar soru çözümü.\n2. Blok: Tarih Kurtuluş Savaşı hazırlık dönemi okuması ve test.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 3, 
+        title: 'Çarşamba: Fizik & Türkçe', 
+        sub: 'Dalgalar Sonrası & Dil Bilgisi', 
+        desc: '1. Blok: Fizik dalgalar sonrası sıradaki konu çalışması.\n2. Blok: Türkçe dil bilgisi pekiştirme ve paragraf.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 4, 
+        title: 'Perşembe: Matematik Ağırlıklı Gün', 
+        sub: 'Denklem Pratikleri & Biyoloji Tekrarı', 
+        desc: '1. Blok: 1. ve 2. dereceden denklemlerden zor soru çözümleri.\n2. Blok: Biyoloji biten konuların genel tekrarı.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 5, 
+        title: 'Cuma: Karma Soru Çözümü', 
+        sub: 'Kimya & Coğrafya Tekrar', 
+        desc: '1. Blok: Kimyasal hesaplamalar tamamlama.\n2. Blok: Biten coğrafya dersinden genel tekrar testi.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 6, 
+        title: 'Cumartesi: Mini Deneme Günü', 
+        sub: 'Genel Tekrar & Analiz', 
+        desc: 'Hafta boyunca işlenen konuların ve yanlış yapılan soruların detaylı analizi, eksiklerin kapatılması.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 7, 
+        title: 'Pazar: Dinlenme & Planlama', 
+        sub: 'Haftalık Değerlendirme', 
+        desc: 'Haftanın yorgunluğunu atma ve gelecek haftanın programını gözden geçirme.', 
+        videoId: 'dQw4w9WgXcQ' 
+      }
     ];
 
-    let completedItems = JSON.parse(localStorage.getItem('karga_full_academy_data')) || [];
+    let completedItems = JSON.parse(localStorage.getItem('suna_hanim_program_data')) || [];
     let selectedId = curriculum[0].id;
 
     function renderView() {
@@ -361,7 +426,7 @@
       } else {
         completedItems.push(id);
       }
-      localStorage.setItem('karga_full_academy_data', JSON.stringify(completedItems));
+      localStorage.setItem('suna_hanim_program_data', JSON.stringify(completedItems));
       renderView();
     }
 
@@ -369,16 +434,20 @@
       toggleItem(selectedId);
     }
 
+    def syncProgress = function() {
+      // internal helper
+    };
+
     function syncProgress() {
       const isDone = completedItems.includes(selectedId);
       const btn = document.getElementById('actionBtn');
       
       if (isDone) {
         btn.className = 'action-btn done';
-        btn.innerHTML = '<i class="bi bi-check-all"></i> Görev Tamamlandı';
+        btn.innerHTML = '<i class="bi bi-check-all"></i> Gün Tamamlandı';
       } else {
         btn.className = 'action-btn';
-        btn.innerHTML = '<i class="bi bi-check2-circle"></i> Tamamlandı Olarak İşaretle';
+        btn.innerHTML = '<i class="bi bi-check2-circle"></i> Günü Tamamlandı İşaretle';
       }
 
       const percent = Math.round((completedItems.length / curriculum.length) * 100);
