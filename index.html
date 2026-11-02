@@ -327,3 +327,133 @@
 
   <script>
     // 6 Saatlik Stratejik Günlük Program Verileri
+    const curriculum = [
+      { 
+        id: 1, 
+        title: 'Salı: Kimya & Tarih Odaklı', 
+        sub: '6 Saat | Türkçe + Mat + Kimya + Tarih', 
+        desc: '• 1. Blok (1 Saat): Türkçe & Paragraf (30 dk paragraf denemesi + 30 dk dil bilgisi tekrarı).\n• 2. Blok (2 Saat): Matematik - 1. ve 2. Dereceden Denklemler (Konu tekrarı + 40-50 soru).\n• 3. Blok (1.5 Saat): Kimya Hesaplamaları ve Fizik Dalgalar Sonrası.\n• 4. Blok (1 Saat): Tarih (Kurtuluş Savaşı Hazırlık Dönemi) + Biyoloji/Coğrafya mini tekrar.\n• Kapanış (30 Dk): Günlük yanlış analizi.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 2, 
+        title: 'Çarşamba: Fizik & Denklemler', 
+        sub: '6 Saat | Türkçe + Mat + Fizik + Sosyal', 
+        desc: '• 1. Blok (1 Saat): Türkçe Paragraf ve Dil Bilgisi.\n• 2. Blok (2 Saat): Matematik - 1. ve 2. Dereceden Denklemler pekiştirme ve soru çözümü.\n• 3. Blok (1.5 Saat): Fizik (Dalgalar sonrasındaki konu) + Kimya kısa tekrar.\n• 4. Blok (1 Saat): Biyoloji ve Coğrafya genel tekrar turları.\n• Kapanış (30 Dk): Soru ve yanlış çözüm tahlili.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 3, 
+        title: 'Perşembe: İleri Seviye Matematik', 
+        sub: '6 Saat | Türkçe + Mat + Kimya + Tarih', 
+        desc: '• 1. Blok (1 Saat): Paragraf & Dil bilgisi soru çözümü.\n• 2. Blok (2 Saat): Matematik - Denklemlerden orta-zor kaynak taraması.\n• 3. Blok (1.5 Saat): Kimya (Kimyasal Hesaplamalar derinlemesine soru çözümü).\n• 4. Blok (1 Saat): Tarih (Kurtuluş Savaşı Hazırlık & İlk Olaylar).\n• Kapanış (30 Dk): Günlük analiz.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 4, 
+        title: 'Cuma: Branş Tarama & Fizik', 
+        sub: '6 Saat | Türkçe + Mat + Fizik + Fen Tekrar', 
+        desc: '• 1. Blok (1 Saat): Türkçe paragraf ve eksik dil bilgisi konuları.\n• 2. Blok (2 Saat): Matematik - Denklemler tarama testi.\n• 3. Blok (1.5 Saat): Fizik (Güncel konu soru çözümü ve pekiştirme).\n• 4. Blok (1 Saat): Biyoloji ve Coğrafya tamamlama testleri.\n• Kapanış (30 Dk): Genel haftalık eksik tespiti.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 5, 
+        title: 'Cumartesi: Mini Deneme & Analiz', 
+        sub: '6 Saat | Deneme ve Kapsamlı Tekrar', 
+        desc: '• 1. Blok (2 Saat): Genel TYT Mini Deneme Sınavı.\n• 2. Blok (2.5 Saat): Deneme Analizi (Yanlış yapılan ve boş bırakılan tüm soruların hocadan/çözümden öğrenilmesi).\n• 3. Blok (1 Saat): Haftanın zorlanan konularının tekrarı.\n• Kapanış (30 Dk): Dinlenme ve haftayı kapatma.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 6, 
+        title: 'Pazar: Eksik Kapanışı & Dinlenme', 
+        sub: 'Esnek Çalışma & Planlama', 
+        desc: '• Hafta içinde yetişmeyen eksiklerin kapatılması.\n• Zihinsel dinlenme ve yeni haftanın programına hazırlık.', 
+        videoId: 'dQw4w9WgXcQ' 
+      },
+      { 
+        id: 7, 
+        title: 'Pazartesi: Yeni Hafta Başlangıcı', 
+        sub: '6 Saat | Temel Dersler', 
+        desc: '• 1. Blok (1 Saat): Türkçe paragraf & dil bilgisi.\n• 2. Blok (2 Saat): Matematik temel konular / denklemler.\n• 3. Blok (1.5 Saat): Kimya & Fizik.\n• 4. Blok (1 Saat): Tarih & Coğrafya.\n• Kapanış (30 Dk): Günlük analiz.', 
+        videoId: 'dQw4w9WgXcQ' 
+      }
+    ];
+
+    let completedItems = JSON.parse(localStorage.getItem('suna_hanim_stratejik_program')) || [];
+    let selectedId = curriculum[0].id;
+
+    function renderView() {
+      const container = document.getElementById('tasksList');
+      container.innerHTML = '';
+
+      curriculum.forEach(item => {
+        const isDone = completedItems.includes(item.id);
+        const isActive = item.id === selectedId;
+
+        const card = document.createElement('div');
+        card.className = `task-card ${isActive ? 'active' : ''} ${isDone ? 'completed' : ''}`;
+        
+        card.innerHTML = `
+          <div class="custom-checkbox" onclick="event.stopPropagation(); toggleItem(${item.id});">
+            <i class="bi bi-check-lg"></i>
+          </div>
+          <div class="task-content">
+            <span class="task-main-text">${item.title}</span>
+            <span class="task-sub-text">${item.sub}</span>
+          </div>
+        `;
+
+        card.onclick = () => selectItem(item.id);
+        container.appendChild(card);
+      });
+
+      syncProgress();
+    }
+
+    function selectItem(id) {
+      selectedId = id;
+      const target = curriculum.find(x => x.id === id);
+      if (!target) return;
+
+      document.getElementById('mainIframe').src = `https://www.youtube.com/embed/${target.videoId}`;
+      document.getElementById('activeTitle').innerText = target.title;
+      document.getElementById('activeDesc').innerText = target.desc;
+      renderView();
+    }
+
+    function toggleItem(id) {
+      if (completedItems.includes(id)) {
+        completedItems = completedItems.filter(x => x !== id);
+      } else {
+        completedItems.push(id);
+      }
+      localStorage.setItem('suna_hanim_stratejik_program', JSON.stringify(completedItems));
+      renderView();
+    }
+
+    function toggleSelected() {
+      toggleItem(selectedId);
+    }
+
+    function syncProgress() {
+      const isDone = completedItems.includes(selectedId);
+      const btn = document.getElementById('actionBtn');
+      
+      if (isDone) {
+        btn.className = 'action-btn done';
+        btn.innerHTML = '<i class="bi bi-check-all"></i> Gün Tamamlandı';
+      } else {
+        btn.className = 'action-btn';
+        btn.innerHTML = '<i class="bi bi-check2-circle"></i> Günü Tamamlandı İşaretle';
+      }
+
+      const percent = Math.round((completedItems.length / curriculum.length) * 100);
+      document.getElementById('progressBar').style.width = percent + '%';
+      document.getElementById('progressPercent').innerText = percent + '%';
+    }
+
+    // Başlat (Varsayılan olarak Salı seçili başlar)
+    selectItem(selectedId);
+  </script>
+</body>
+</html>
