@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta name="theme-color" content="#000000"/>
-  <meta name="description" content="Şuna Hanım için özel hazırlanan 6 saatlik stratejik çalışma programı ve takip çizelgesi."/>
+  <meta name="description" content="Suna Hanım için özel hazırlanan detaylı çalışma programı ve takip çizelgesi."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -22,6 +22,7 @@
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
       --success: #10b981;
+      --danger: #ef4444;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,6 +43,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .logo-area {
       display: flex;
@@ -53,6 +56,11 @@
       font-size: 1.15rem;
       letter-spacing: -0.02em;
     }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
     .badge-mentor {
       background: rgba(245, 158, 11, 0.12);
       border: 1px solid rgba(245, 158, 11, 0.35);
@@ -61,6 +69,23 @@
       border-radius: 9999px;
       font-size: 0.82rem;
       font-weight: 600;
+    }
+    .admin-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+    }
+    .admin-btn:hover, .admin-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
     /* Ana Ekran Düzeni */
@@ -234,12 +259,37 @@
       margin-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .day-details-box p {
       font-size: 0.9rem;
       color: var(--text-muted);
       line-height: 1.6;
       white-space: pre-line;
+    }
+
+    /* Düzenleme Alanları */
+    .edit-field {
+      width: 100%;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    textarea.edit-field {
+      min-height: 160px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .edit-field:focus {
+      outline: none;
+      border-color: var(--accent);
     }
 
     .content-footer {
@@ -271,6 +321,15 @@
       background-color: var(--success);
       color: #fff;
     }
+    .save-btn {
+      background-color: var(--success);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -280,8 +339,13 @@
       <i class="bi bi-journal-check" style="font-size: 1.4rem;"></i>
       ŞUNA HANIM'IN ÇALIŞMA PROGRAMI
     </a>
-    <div class="badge-mentor">
-      <i class="bi bi-fire me-1"></i> Günlük 6 Saat Stratejik Plan
+    <div class="header-actions">
+      <div class="badge-mentor">
+        <i class="bi bi-fire me-1"></i> Haftalık Stratejik Plan
+      </div>
+      <button class="admin-btn" id="adminToggleBtn" onclick="handleAdminAuth()">
+        <i class="bi bi-lock-fill"></i> <span id="adminBtnText">Hoca Girişi</span>
+      </button>
     </div>
   </header>
 
@@ -298,7 +362,7 @@
         </div>
       </div>
 
-      <div class="section-heading">6 SAATLİK GÜNLÜK ÇİZELGE</div>
+      <div class="section-heading">GÜNLÜK DETAYLI ÇİZELGE</div>
       <div class="task-container" id="tasksList"></div>
     </aside>
 
@@ -309,8 +373,32 @@
       </div>
 
       <div class="day-details-box">
-        <h3>Günlük 6 Saatlik Blok Detayları</h3>
-        <p id="activeDesc">Sol taraftaki çizelgeden bir gün seçin.</p>
+        <h3>
+          <span>GÜNLÜK DETAYLI DERS & KONU PLANI</span>
+          <span id="editStatusBadge" style="font-size: 0.75rem; color: var(--accent); display: none;">[Düzenleme Modu Açık]</span>
+        </h3>
+        
+        <!-- Normal Görünüm -->
+        <div id="viewModeContainer">
+          <p id="activeDesc">Sol taraftaki çizelgeden bir gün seçin.</p>
+        </div>
+
+        <!-- Hoca Düzenleme Alanı -->
+        <div id="editModeContainer" style="display: none;">
+          <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Gün Başlığı:</label>
+          <input type="text" id="editTitleInput" class="edit-field" />
+          
+          <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Alt Bilgi (Süre & Dersler):</label>
+          <input type="text" id="editSubInput" class="edit-field" />
+          
+          <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">Konular ve Blok Detayları:</label>
+          <textarea id="editDescInput" class="edit-field"></textarea>
+
+          <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px;">YouTube Video ID (embed kodu):</label>
+          <input type="text" id="editVideoInput" class="edit-field" placeholder="örneğin: dQw4w9WgXcQ" />
+
+          <button class="save-btn" onclick="saveCurrentEdits()"><i class="bi bi-floppy"></i> Değişiklikleri Kaydet</button>
+        </div>
       </div>
 
       <div class="content-footer">
@@ -326,59 +414,65 @@
   </div>
 
   <script>
-    // 6 Saatlik Stratejik Günlük Program Verileri
-    const curriculum = [
+    // Varsayılan Hoca Giriş Şifresi
+    const ADMIN_PASSWORD = "1234"; 
+    let isAdmin = false;
+
+    // Detaylandırılmış Varsayılan Çalışma Programı
+    const defaultCurriculum = [
       { 
         id: 1, 
-        title: 'Salı: Kimya & Tarih Odaklı', 
-        sub: '6 Saat | Türkçe + Mat + Kimya + Tarih', 
-        desc: '• 1. Blok (1 Saat): Türkçe & Paragraf (30 dk paragraf denemesi + 30 dk dil bilgisi tekrarı).\n• 2. Blok (2 Saat): Matematik - 1. ve 2. Dereceden Denklemler (Konu tekrarı + 40-50 soru).\n• 3. Blok (1.5 Saat): Kimya Hesaplamaları ve Fizik Dalgalar Sonrası.\n• 4. Blok (1 Saat): Tarih (Kurtuluş Savaşı Hazırlık Dönemi) + Biyoloji/Coğrafya mini tekrar.\n• Kapanış (30 Dk): Günlük yanlış analizi.', 
+        title: 'Pazartesi: Türkçe & Matematik Temel', 
+        sub: '6 Saat | Türkçe + Matematik + Tarih', 
+        desc: '• 1. Blok (1.5 Saat) - Türkçe: Paragraf Yapısı & Anlatım Biçimleri (30 Dk Konu + 40 Soru çözümü).\n• 2. Blok (2 Saat) - Matematik: 1. Dereceden Denklemler & Eşitsizlikler (Kavrama ve Test 1-2 / 50 Soru).\n• 3. Blok (1.5 Saat) - Tarih: İslam Öncesi Türk Tarihi & Devlet Teşkilatı (Geniş Konu Tekrarı + 30 Soru).\n• 4. Blok (1 Saat) - Kapanış & Analiz: Gün boyu çözülen tüm yanlış ve boş soruların çözümlerini inceleme.', 
         videoId: 'dQw4w9WgXcQ' 
       },
       { 
         id: 2, 
-        title: 'Çarşamba: Fizik & Denklemler', 
-        sub: '6 Saat | Türkçe + Mat + Fizik + Sosyal', 
-        desc: '• 1. Blok (1 Saat): Türkçe Paragraf ve Dil Bilgisi.\n• 2. Blok (2 Saat): Matematik - 1. ve 2. Dereceden Denklemler pekiştirme ve soru çözümü.\n• 3. Blok (1.5 Saat): Fizik (Dalgalar sonrasındaki konu) + Kimya kısa tekrar.\n• 4. Blok (1 Saat): Biyoloji ve Coğrafya genel tekrar turları.\n• Kapanış (30 Dk): Soru ve yanlış çözüm tahlili.', 
+        title: 'Salı: Kimya & İleri Matematik', 
+        sub: '6 Saat | Mat + Kimya + Biyoloji', 
+        desc: '• 1. Blok (2 Saat) - Matematik: 2. Dereceden Denklemler & Karmaşık Sayılar (Konu Anlatımı + 45 Soru).\n• 2. Blok (1.5 Saat) - Kimya: Kimyasal Hesaplamalar & Mol Kavramı Pekiştirme (35 Soru).\n• 3. Blok (1.5 Saat) - Biyoloji: Hücre Bölünmeleri & Kalıtım Giriş (Detaylı Özet + 30 Soru).\n• 4. Blok (1 Saat) - Türkçe Tekrar: Dil Bilgisi - Sözcükte Yapı ve Ekler (25 Soru).', 
         videoId: 'dQw4w9WgXcQ' 
       },
       { 
         id: 3, 
-        title: 'Perşembe: İleri Seviye Matematik', 
-        sub: '6 Saat | Türkçe + Mat + Kimya + Tarih', 
-        desc: '• 1. Blok (1 Saat): Paragraf & Dil bilgisi soru çözümü.\n• 2. Blok (2 Saat): Matematik - Denklemlerden orta-zor kaynak taraması.\n• 3. Blok (1.5 Saat): Kimya (Kimyasal Hesaplamalar derinlemesine soru çözümü).\n• 4. Blok (1 Saat): Tarih (Kurtuluş Savaşı Hazırlık & İlk Olaylar).\n• Kapanış (30 Dk): Günlük analiz.', 
+        title: 'Çarşamba: Fizik & Coğrafya Odaklı', 
+        sub: '6 Saat | Fizik + Coğrafya + Türkçe', 
+        desc: '• 1. Blok (2 Saat) - Fizik: Dalgalar & Hareket/Kuvvet Temel Prensipleri (Soru Üzerinden Konu Tekrarı / 40 Soru).\n• 2. Blok (1.5 Saat) - Coğrafya: Türkiye\'nin İklimi ve Yeryüzü Şekilleri (Harita Çalışması + 30 Soru).\n• 3. Blok (1.5 Saat) - Türkçe: Paragrafta Ana Fikir & Yardımcı Fikir (40 Soru Seri Çözüm).\n• 4. Blok (1 Saat) - Genel Tekrar: Matematik Formül Kartları ve Yanlış Sorular Listesi.', 
         videoId: 'dQw4w9WgXcQ' 
       },
       { 
         id: 4, 
-        title: 'Cuma: Branş Tarama & Fizik', 
-        sub: '6 Saat | Türkçe + Mat + Fizik + Fen Tekrar', 
-        desc: '• 1. Blok (1 Saat): Türkçe paragraf ve eksik dil bilgisi konuları.\n• 2. Blok (2 Saat): Matematik - Denklemler tarama testi.\n• 3. Blok (1.5 Saat): Fizik (Güncel konu soru çözümü ve pekiştirme).\n• 4. Blok (1 Saat): Biyoloji ve Coğrafya tamamlama testleri.\n• Kapanış (30 Dk): Genel haftalık eksik tespiti.', 
+        title: 'Perşembe: Tarih & Fen Bilimleri Tarama', 
+        sub: '6 Saat | Tarih + Kimya + Fizik', 
+        desc: '• 1. Blok (2 Saat) - Tarih: Kurtuluş Savaşı Hazırlık Dönemi & Genelgeler/Kongreler (Detaylı Not Çıkarma + 40 Soru).\n• 2. Blok (1.5 Saat) - Kimya: Asitler, Bazlar ve Tuzlar (Konu Odaklı Soru Çözümü / 30 Soru).\n• 3. Blok (1.5 Saat) - Fizik: Optik / Aydınlanma ve Yansıma (30 Soru).\n• 4. Blok (1 Saat) - Türkçe: Ses Bilgisi ve Yazım Kuralları (25 Soru).', 
         videoId: 'dQw4w9WgXcQ' 
       },
       { 
         id: 5, 
-        title: 'Cumartesi: Mini Deneme & Analiz', 
-        sub: '6 Saat | Deneme ve Kapsamlı Tekrar', 
-        desc: '• 1. Blok (2 Saat): Genel TYT Mini Deneme Sınavı.\n• 2. Blok (2.5 Saat): Deneme Analizi (Yanlış yapılan ve boş bırakılan tüm soruların hocadan/çözümden öğrenilmesi).\n• 3. Blok (1 Saat): Haftanın zorlanan konularının tekrarı.\n• Kapanış (30 Dk): Dinlenme ve haftayı kapatma.', 
+        title: 'Cuma: Matematik & Türkçe Tamamlama', 
+        sub: '6 Saat | Matematik + Türkçe + Biyoloji', 
+        desc: '• 1. Blok (2 Saat) - Matematik: Fonksiyonlar ve Grafik İnceleme (Orta/Zor Seviye 40 Soru).\n• 2. Blok (1.5 Saat) - Türkçe: Noktalama İşaretleri & Anlatım Bozuklukları (35 Soru).\n• 3. Blok (1.5 Saat) - Biyoloji: Ekosistem Ekolojisi & Güncel Çevre Sorunları (30 Soru).\n• 4. Blok (1 Saat) - Haftalık Değerlendirme: Tüm derslerden yapılamayan soru havuzu.', 
         videoId: 'dQw4w9WgXcQ' 
       },
       { 
         id: 6, 
-        title: 'Pazar: Eksik Kapanışı & Dinlenme', 
-        sub: 'Esnek Çalışma & Planlama', 
-        desc: '• Hafta içinde yetişmeyen eksiklerin kapatılması.\n• Zihinsel dinlenme ve yeni haftanın programına hazırlık.', 
+        title: 'Cumartesi: Deneme & Detaylı Analiz', 
+        sub: '6 Saat | Tam Kapsamlı Deneme', 
+        desc: '• 1. Blok (2.5 Saat) - Genel Deneme Sınavı: Gerçek sınav süresine uygun tam odaklı çözüm.\n• 2. Blok (2.5 Saat) - Soru Analizi: Denemedeki tüm yanlış ve boş soruların çözümlerini deftere not etme.\n• 3. Blok (1 Saat) - Eksik Tespiti: Deneme sonucuna göre haftaya devredilecek eksiklerin listelenmesi.', 
         videoId: 'dQw4w9WgXcQ' 
       },
       { 
         id: 7, 
-        title: 'Pazartesi: Yeni Hafta Başlangıcı', 
-        sub: '6 Saat | Temel Dersler', 
-        desc: '• 1. Blok (1 Saat): Türkçe paragraf & dil bilgisi.\n• 2. Blok (2 Saat): Matematik temel konular / denklemler.\n• 3. Blok (1.5 Saat): Kimya & Fizik.\n• 4. Blok (1 Saat): Tarih & Coğrafya.\n• Kapanış (30 Dk): Günlük analiz.', 
+        title: 'Pazar: Hafif Tekrar & Haftalık Kapanış', 
+        sub: '4 Saat | Esnek Çalışma & Zihinsel Dinlenme', 
+        desc: '• 1. Blok (2 Saat) - Genel Tekrar: Hafta boyunca öğrenilen önemli formül, tarih ve ders notlarının gözden geçirilmesi.\n• 2. Blok (2 Saat) - Eksik Kapatma: Yetişmeyen veya eksik kalan testlerin tamamlanması.\n• Kapanış: Yeni haftanın hedeflerinin belirlenmesi ve dinlenme.', 
         videoId: 'dQw4w9WgXcQ' 
       }
     ];
 
+    // Kayıtlı veriyi al yoksa varsayılanı yükle
+    let curriculum = JSON.parse(localStorage.getItem('suna_hanim_curriculum_data')) || defaultCurriculum;
     let completedItems = JSON.parse(localStorage.getItem('suna_hanim_stratejik_program')) || [];
     let selectedId = curriculum[0].id;
 
@@ -418,6 +512,15 @@
       document.getElementById('mainIframe').src = `https://www.youtube.com/embed/${target.videoId}`;
       document.getElementById('activeTitle').innerText = target.title;
       document.getElementById('activeDesc').innerText = target.desc;
+
+      // Eğer Hoca Modu açık ise form alanlarını doldur
+      if (isAdmin) {
+        document.getElementById('editTitleInput').value = target.title;
+        document.getElementById('editSubInput').value = target.sub;
+        document.getElementById('editDescInput').value = target.desc;
+        document.getElementById('editVideoInput').value = target.videoId;
+      }
+
       renderView();
     }
 
@@ -452,7 +555,64 @@
       document.getElementById('progressPercent').innerText = percent + '%';
     }
 
-    // Başlat (Varsayılan olarak Salı seçili başlar)
+    /* --- Hoca / Şifreli Düzenleme Fonksiyonları --- */
+    function handleAdminAuth() {
+      if (isAdmin) {
+        // Çıkış yap
+        isAdmin = false;
+        toggleAdminUI();
+      } else {
+        const pass = prompt("Ders programını düzenlemek için hoca şifresini girin:");
+        if (pass === ADMIN_PASSWORD) {
+          isAdmin = true;
+          alert("Giriş başarılı! Seçili günün konularını ve başlıklarını düzenleyebilirsiniz.");
+          toggleAdminUI();
+        } else if (pass !== null) {
+          alert("Hatalı şifre!");
+        }
+      }
+    }
+
+    function toggleAdminUI() {
+      const btnText = document.getElementById('adminBtnText');
+      const btn = document.getElementById('adminToggleBtn');
+      const viewContainer = document.getElementById('viewModeContainer');
+      const editContainer = document.getElementById('editModeContainer');
+      const badge = document.getElementById('editStatusBadge');
+
+      if (isAdmin) {
+        btnText.innerText = "Düzenlemeyi Kapat";
+        btn.classList.add('active');
+        viewContainer.style.display = 'none';
+        editContainer.style.display = 'block';
+        badge.style.display = 'inline';
+        selectItem(selectedId); // Form alanlarını güncelle
+      } else {
+        btnText.innerText = "Hoca Girişi";
+        btn.classList.remove('active');
+        viewContainer.style.display = 'block';
+        editContainer.style.display = 'none';
+        badge.style.display = 'none';
+      }
+    }
+
+    function saveCurrentEdits() {
+      const targetIndex = curriculum.findIndex(x => x.id === selectedId);
+      if (targetIndex === -1) return;
+
+      curriculum[targetIndex].title = document.getElementById('editTitleInput').value;
+      curriculum[targetIndex].sub = document.getElementById('editSubInput').value;
+      curriculum[targetIndex].desc = document.getElementById('editDescInput').value;
+      curriculum[targetIndex].videoId = document.getElementById('editVideoInput').value.trim();
+
+      // Değişiklikleri tarayıcıya kaydet
+      localStorage.setItem('suna_hanim_curriculum_data', JSON.stringify(curriculum));
+      
+      alert("Günün ders ve konu içeriği başarıyla güncellendi!");
+      selectItem(selectedId);
+    }
+
+    // Başlat
     selectItem(selectedId);
   </script>
 </body>
